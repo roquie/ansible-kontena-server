@@ -14,27 +14,19 @@
   apt:
     update_cache: yes
 
-- name: Install Kontena Server
-  apt:
-    name: kontena-server
-    state: present
-
-- name: Stop Kontena HAProxy
-  when: ansible_distribution_release == "trusty"
-  shell: stop kontena-server-haproxy
+- name: Install Kontena Server without interactive mode & postinstall script
+  shell: >
+    apt-get download kontena-server \
+    && dpkg --unpack kontena-server*.deb \
+    && rm -f /var/lib/dpkg/info/kontena-server.postinst \
+    && dpkg --configure kontena-server \
+    && apt-get install -yf
 
 - name: Setup Initial Code
   lineinfile:
     path: "{{ ks_config_path }}"
     regexp: "^INITIAL_ADMIN_CODE="
     line: "INITIAL_ADMIN_CODE={{ ks_initial_code }}"
-
-- name: Restart Kontena Server
-  when: ansible_distribution_release == "xenial"
-  systemd:
-    state: restarted
-    daemon_reload: yes
-    name: kontena-server
 
 - name: Copy SSL Certificate
   when: ks_ssl_cert_install
@@ -53,16 +45,30 @@
   tags:
     - cert_master
 
-- name: Start Kontena HAProxy
-  when: ks_ssl_cert_install and ansible_distribution_release == "trusty"
-  shell: start kontena-server-haproxy
+- name: Start Kontena Server services (trusty)
+  when: ansible_distribution_release == "trusty"
+  service:
+    name: "{{ item }}"
+    state: restarted
+    enabled: yes
+  with_items:
+    - kontena-server-mongo
+    - kontena-server-api
+    - kontena-server-haproxy
+  tags:
+    - cert_master
 
-- name: Restart Kontena HAProxy
-  when: ks_ssl_cert_install and ansible_distribution_release == "xenial"
+- name: Start Kontena Server services (xenial)
+  when: ansible_distribution_release == "xenial"
   systemd:
     state: restarted
     daemon_reload: yes
-    name: kontena-server-haproxy
+    name: kontena-server
+    enabled: yes
+  with_items:
+      - kontena-server-mongo
+      - kontena-server
+      - kontena-server-haproxy
   tags:
     - cert_master
 

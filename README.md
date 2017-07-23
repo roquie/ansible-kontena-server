@@ -11,6 +11,8 @@
 <br />
 <br />
 
+[![Build Status](https://travis-ci.org/roquie/ansible-kontena-server.svg?branch=master)](https://travis-ci.org/roquie/ansible-kontena-server)
+
 Ansible role to install Kontena Server on Masters.
 
 Example, how to use, can be found at `tests` directory.
@@ -22,7 +24,7 @@ Example, how to use, can be found at `tests` directory.
 ansible-galaxy install roquie.ansible-kontena-server
 ```
 
-## Support of OS
+## Supported OS
 
 For now supports:
 * Ubuntu 16.04 LTS
