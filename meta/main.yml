@@ -1,15 +1,18 @@
 ---
 galaxy_info:
   author: roquie
-  description: Install Kontena Master on server.
+  description: Install Kontena Server on Master servers.
   license: MIT
   min_ansible_version: 2.2
   platforms:
     - name: Ubuntu
       versions:
         - xenial
+        - trusty
   galaxy_tags:
     - kontena
+    - kontena-server
+    - kontena-master
     - docker
 
 dependencies:
