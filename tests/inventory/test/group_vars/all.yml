@@ -1,0 +1,7 @@
+---
+
+ks_ssl_cert_install: yes
+ks_ssl_cert_path: "/etc/kontena-server.pem" # /path/to/certificate.pem
+ks_initial_code: "secret"
+
+

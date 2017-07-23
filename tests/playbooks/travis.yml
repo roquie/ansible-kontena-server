@@ -1,0 +1,13 @@
+---
+
+- hosts: local
+  roles:
+    - geerlingguy.docker
+  tags:
+    - docker
+
+- hosts: local
+  roles:
+    - role_under_test
+  tags:
+    - kontena_server

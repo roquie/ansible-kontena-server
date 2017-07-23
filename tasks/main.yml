@@ -1,0 +1,68 @@
+---
+
+- name: Download subject public key & add
+  apt_key:
+    url: https://bintray.com/user/downloadSubjectPublicKey?username=bintray
+    state: present
+
+- name: Add kontena.list
+  copy:
+    content: "deb http://dl.bintray.com/kontena/ubuntu {{ ansible_distribution_release }} main"
+    dest: /etc/apt/sources.list.d/kontena.list
+
+- name: Update apt cache
+  apt:
+    update_cache: yes
+
+- name: Install Kontena Server
+  apt:
+    name: kontena-server
+    state: present
+
+- name: Stop Kontena HAProxy
+  when: ansible_distribution_release == "trusty"
+  shell: stop kontena-server-haproxy
+
+- name: Setup Initial Code
+  lineinfile:
+    path: "{{ ks_config_path }}"
+    regexp: "^INITIAL_ADMIN_CODE="
+    line: "INITIAL_ADMIN_CODE={{ ks_initial_code }}"
+
+- name: Restart Kontena Server
+  when: ansible_distribution_release == "xenial"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: kontena-server
+
+- name: Copy SSL Certificate
+  when: ks_ssl_cert_install
+  copy:
+    src: "{{ ks_ssl_cert_local_path }}"
+    dest: "{{ ks_ssl_cert_path }}"
+  tags:
+    - cert_master
+
+- name: Setup SSL Certificate
+  when: ks_ssl_cert_install
+  lineinfile:
+    path: "{{ ks_config_path }}"
+    regexp: "^SSL_CERT="
+    line: "SSL_CERT={{ ks_ssl_cert_path }}"
+  tags:
+    - cert_master
+
+- name: Start Kontena HAProxy
+  when: ks_ssl_cert_install and ansible_distribution_release == "trusty"
+  shell: start kontena-server-haproxy
+
+- name: Restart Kontena HAProxy
+  when: ks_ssl_cert_install and ansible_distribution_release == "xenial"
+  systemd:
+    state: restarted
+    daemon_reload: yes
+    name: kontena-server-haproxy
+  tags:
+    - cert_master
+
