@@ -21,12 +21,25 @@
     && rm -f /var/lib/dpkg/info/kontena-server.postinst \
     && dpkg --configure kontena-server \
     && apt-get install -yf
+  args:
+    chdir: /tmp
 
-- name: Setup Initial Code
-  lineinfile:
-    path: "{{ ks_config_path }}"
-    regexp: "^INITIAL_ADMIN_CODE="
-    line: "INITIAL_ADMIN_CODE={{ ks_initial_code }}"
+- include: gen.yml
+
+- set_fact:
+    ks_vault_key: "{{ command_output.stdout }}"
+  when: ks_vault_key|default('')|length == 0
+
+- include: gen.yml
+
+- set_fact:
+    ks_vault_iv: "{{ command_output.stdout }}"
+  when: ks_vault_iv|default('')|length == 0
+
+- name: Configure Kontena Server
+  template:
+    src: "templates/kontena-server.env.j2"
+    dest: "{{ ks_config_path }}"
 
 - name: Copy SSL Certificate
   when: ks_ssl_cert_install
@@ -34,7 +47,7 @@
     src: "{{ ks_ssl_cert_local_path }}"
     dest: "{{ ks_ssl_cert_path }}"
   tags:
-    - cert_master
+    - cert
 
 - name: Setup SSL Certificate
   when: ks_ssl_cert_install
@@ -43,7 +56,7 @@
     regexp: "^SSL_CERT="
     line: "SSL_CERT={{ ks_ssl_cert_path }}"
   tags:
-    - cert_master
+    - cert
 
 - name: Start Kontena Server services (trusty)
   when: ansible_distribution_release == "trusty"
@@ -56,7 +69,7 @@
     - kontena-server-api
     - kontena-server-haproxy
   tags:
-    - cert_master
+    - cert
 
 - name: Start Kontena Server services (xenial)
   when: ansible_distribution_release == "xenial"
@@ -70,5 +83,5 @@
       - kontena-server
       - kontena-server-haproxy
   tags:
-    - cert_master
+    - cert
 
