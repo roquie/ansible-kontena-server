@@ -15,5 +15,4 @@ galaxy_info:
     - kontena-master
     - docker
 
-dependencies:
-  - geerlingguy.docker
+dependencies: []
