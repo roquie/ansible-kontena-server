@@ -8,8 +8,8 @@ Vagrant.configure('2') do |config|
   config.ssh.private_key_path = '~/.vagrant.d/insecure_private_key'
 
   config.vm.define 'ansible-kontena-server' do |machine|
-    #machine.vm.box = "bento/ubuntu-16.04"
-     machine.vm.box = "ubuntu/trusty64"
+    machine.vm.box = "bento/ubuntu-16.04"
+    #machine.vm.box = "ubuntu/trusty64"
     #machine.vm.box = "ubuntu/precise64"
     #machine.vm.box = "debian/jessie64"
     #machine.vm.box = "debian/wheezy64"
@@ -21,7 +21,7 @@ Vagrant.configure('2') do |config|
       v.customize ["modifyvm", :id, "--memory", 512]
     end
 
-    machine.vm.network :forwarded_port, guest: 80, host: 7001 # Kontena Master Server port
+    machine.vm.network :forwarded_port, guest: 8080, host: 7001 # Kontena Master Server port
     machine.vm.network :private_network, ip: '10.110.0.10'
 
     machine.vm.provision 'ansible' do |ansible|

@@ -1,5 +1,12 @@
 ---
 
+# NTP
+ntp_enabled: yes
+ntp_timezone: UTC
+ntp_area: '.europe'
+ntp_manage_config: yes
+
+# Kontena Server
 ks_http_port: 8080
 ks_https_port: 8443
 
@@ -14,3 +21,7 @@ ks_config_path: "{{ (ansible_distribution_release == 'xenial') | ternary('/etc/k
 # This keys will be generated automatically when role started.
 # ks_vault_key: ""
 # ks_vault_iv: ""
+
+ks_ntp_configure: yes
+ks_ntp_master_uri: "domain.com"
+ks_ntpdate_server: "time.nist.gov"

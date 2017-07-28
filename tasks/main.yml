@@ -1,22 +1,19 @@
 ---
 
-- name: Download subject public key & add
+- name: Download subject public key & add.
   apt_key:
     url: https://bintray.com/user/downloadSubjectPublicKey?username=bintray
     state: present
 
-- name: Add kontena.list
+- name: Add Kontena source list.
   copy:
     content: "deb http://dl.bintray.com/kontena/ubuntu {{ ansible_distribution_release }} main"
     dest: /etc/apt/sources.list.d/kontena.list
 
-- name: Update apt cache
-  apt:
-    update_cache: yes
-
-- name: Install Kontena Server without interactive mode & postinstall script
+- name: Install Kontena Server without interactive mode & postinstall script.
   shell: >
-    apt-get download kontena-server \
+    apt-get update \
+    && apt-get download kontena-server \
     && dpkg --unpack kontena-server*.deb \
     && rm -f /var/lib/dpkg/info/kontena-server.postinst \
     && dpkg --configure kontena-server \
@@ -36,12 +33,12 @@
     ks_vault_iv: "{{ command_output.stdout }}"
   when: ks_vault_iv|default('')|length == 0
 
-- name: Configure Kontena Server
+- name: Configure Kontena Server.
   template:
     src: "templates/kontena-server.env.j2"
     dest: "{{ ks_config_path }}"
 
-- name: Copy SSL Certificate
+- name: Copy SSL Certificate.
   when: ks_ssl_cert_install
   copy:
     src: "{{ ks_ssl_cert_local_path }}"
@@ -49,7 +46,7 @@
   tags:
     - cert
 
-- name: Setup SSL Certificate
+- name: Setup SSL Certificate.
   when: ks_ssl_cert_install
   lineinfile:
     path: "{{ ks_config_path }}"
@@ -58,7 +55,7 @@
   tags:
     - cert
 
-- name: Start Kontena Server services (trusty)
+- name: Start Kontena Server services (trusty).
   when: ansible_distribution_release == "trusty"
   service:
     name: "{{ item }}"
@@ -71,7 +68,7 @@
   tags:
     - cert
 
-- name: Start Kontena Server services (xenial)
+- name: Start Kontena Server services (xenial).
   when: ansible_distribution_release == "xenial"
   systemd:
     state: restarted
@@ -85,3 +82,5 @@
   tags:
     - cert
 
+- include: ntp.yml
+  when: ks_ntp_configure

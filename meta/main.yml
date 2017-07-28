@@ -3,7 +3,7 @@ galaxy_info:
   author: roquie
   description: Install Kontena Server on Master servers.
   license: MIT
-  min_ansible_version: 2.2
+  min_ansible_version: 2.3
   platforms:
     - name: Ubuntu
       versions:
@@ -15,4 +15,5 @@ galaxy_info:
     - kontena-master
     - docker
 
-dependencies: []
+dependencies:
+  - geerlingguy.ntp
