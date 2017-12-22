@@ -1,9 +1,10 @@
 # http://docs.ansible.com/ansible/galaxy.html#installing-multiple-roles-from-a-file
 
 - name: geerlingguy.docker
-  version: 2.0.5
+  version: 2.1.0
 
-- name: roquie.ansible-ntpdate
+- name: galexrt.ansible-ntpdate
+  version: v1.0.0
 
 - name: geerlingguy.ntp
   version: 1.5.2
