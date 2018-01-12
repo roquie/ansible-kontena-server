@@ -2,8 +2,8 @@
 
 - hosts: vagrant
   become: yes
-  vars:
-    docker_package: "docker-ce=17.03*"
+#  vars:
+#    docker_package: "docker-ce=17.03*"
   roles:
     - geerlingguy.docker
   tags:
@@ -12,7 +12,7 @@
 - hosts: vagrant
   become: yes
   pre_tasks:
-    - include_role: name=roquie.ansible-ntpdate
+    - include_role: name=galexrt.ansible-ntpdate
   roles:
     - ../../../ansible-kontena-server
   tags:

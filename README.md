@@ -24,6 +24,10 @@ Example, how to use, can be found at `tests` directory.
 ansible-galaxy install roquie.ansible-kontena-server
 ```
 
+## TODO
+
+* [ ] Full idempotence
+
 ## Supported OS
 
 For now supports:

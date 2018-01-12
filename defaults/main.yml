@@ -14,3 +14,4 @@ ks_config_path: "{{ (ansible_distribution_release == 'xenial') | ternary('/etc/k
 # This keys will be generated automatically when role started.
 # ks_vault_key: ""
 # ks_vault_iv: ""
+ks_vault_generate: no

@@ -24,17 +24,17 @@
   args:
     chdir: /tmp
 
-- include: gen.yml
+- import_tasks: gen.yml
 
 - set_fact:
     ks_vault_key: "{{ command_output.stdout }}"
-  when: ks_vault_key|default('')|length == 0
+  when: ks_vault_key|default('')|length == 0 and ks_vault_generate
 
-- include: gen.yml
+- import_tasks: gen.yml
 
 - set_fact:
     ks_vault_iv: "{{ command_output.stdout }}"
-  when: ks_vault_iv|default('')|length == 0
+  when: ks_vault_iv|default('')|length == 0 and ks_vault_generate
 
 - name: Configure Kontena Server
   template:
